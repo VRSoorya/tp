@@ -257,6 +257,17 @@ Implementation of edit booking creates a `editedBooking` before calling `Booking
 * **Alternative 1 (current choice):** Verify the validity of `BookingList#setBooking` by simulating the deletion of `bookingToEdit` and addition of `editedBooking` through a method in `BookingList`
     * Pros: allows the use of `BookingList#setBooking`, separating `EditBookingCommand` from `AddingBookingCommand` and `DeleteBookingCommand`.
     * Cons: creating a method that is similar to `BookingList#contains`.
+    
+### Booking class
+
+#### Design Consideration:
+* **Alternative 1 (current choice):** Morph `Person` class into `Booking` class
+    * Pros: With the `doesOverlap` method of `BookingTime`, it is convenient to ensure that there are no overlapping bookings for `Residence`s.
+    * Cons: All references to `Person` in existing classes, tests, and test utilities would have to be replaced, and new ones would have to be designed to accommodate `Booking`s.
+
+* **Alternative 2:** Preserve `Person` class
+    * Pros: If the same person is making multiple bookings, storing `Person`s would save time spent on re-entering the same details (e.g. `TenantName` and `Phone`). 
+    * Cons: Considering ResidenceTracker's target users would have a high turnover rate for their rental properties, keeping records of `Person`s could result in excessive storage usage. Furthermore, most `Person`s would probably only be used once, which makes storing them wasteful.
 
 * **Alternative 2:** After creating `editedBooking`, use `DeleteBookingCommand` on `bookingToEdit` and `AddBookingCommand` to add `editedBooking` back to the `bookingList`
     * Pros: `AddBookingCommand` handles the check for overlapping dates for `editedBooking`. Previous issue of `bookingToEdit`existing in the `bookingList` is solved by deletion.
